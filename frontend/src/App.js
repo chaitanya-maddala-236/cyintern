@@ -4,7 +4,8 @@ import { SubmitButton } from './submit';
 
 function App() {
   return (
-    <div>
+    <div className="app-shell">
+      <header className="app-header">VectorShift Pipeline Builder</header>
       <PipelineToolbar />
       <PipelineUI />
       <SubmitButton />
