@@ -1,57 +1,97 @@
-# Pipeline Builder Assessment
+# VectorShift Pipeline Builder
 
-This repository contains:
+A visual node-based pipeline editor built with React Flow, Zustand, and FastAPI.
+Drag nodes onto the canvas, wire them together, and submit to validate your pipeline.
 
-- **Frontend**: a React + React Flow app for visually building a node pipeline.
-- **Backend**: a FastAPI service that parses a submitted pipeline and returns:
-  - `num_nodes`
-  - `num_edges`
-  - `is_dag`
+---
 
-## Prerequisites
+## Demo
 
-- Node.js 18+
-- npm
-- Python 3.10+
+<!-- Add a GIF here: record with ScreenToGif, Loom, or macOS QuickTime + ezgif -->
+![demo](./demo.gif)
 
-## Run the backend
+---
 
-```bash
-cd backend
-python -m pip install fastapi uvicorn
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
+## Features
+
+- **Node abstraction** — all nodes are thin configs over a shared `BaseNode` component
+- **9 node types** — Input, Output, LLM, Text, API, Filter, Transform, Merge, Note
+- **Dynamic Text node** — auto-resizes as you type; detects `{{ variable }}` syntax and generates live input handles
+- **Pipeline validation** — submit sends nodes + edges to FastAPI; backend returns node count, edge count, and DAG status
+- **Dark themed UI** — custom CSS design system with IBM Plex Mono + Syne fonts
+
+---
+
+## Architecture
+
+### Frontend
+
+```text
+frontend/src/
+├── nodes/
+│   ├── baseNode.js       ← shared container: handles, header, layout
+│   ├── inputNode.js      ← thin config only
+│   ├── outputNode.js     ← thin config only
+│   ├── llmNode.js        ← thin config only
+│   ├── textNode.js       ← config + auto-resize + variable handle logic
+│   └── customNodes.js    ← Api, Filter, Transform, Note, Merge
+├── components/
+│   └── NodeField.js      ← shared field wrapper used by nodes
+├── store.js              ← Zustand: nodes, edges, updateNodeField
+├── ui.js                 ← ReactFlow canvas
+├── toolbar.js            ← draggable node palette
+└── submit.js             ← POST to backend + result modal
 ```
 
-Backend will be available at `http://localhost:8000`.
+**Key design decision:** `BaseNode` owns all handle rendering, node chrome (header, border, shadow), and layout. Individual node files only declare `inputs`, `outputs`, colors, and their unique fields. Adding a new node type takes ~20 lines.
 
-## Run the frontend
+### Backend
 
+```text
+backend/
+├── main.py        ← FastAPI: POST /pipelines/parse
+└── requirements.txt
+```
+
+Uses `networkx.is_directed_acyclic_graph()` for cycle detection. CORS configured for `localhost:3000`.
+
+---
+
+## Tech Stack
+
+| Layer | Library |
+|-------|---------|
+| Canvas | React Flow 11 |
+| State | Zustand 4 |
+| Backend | FastAPI + Uvicorn |
+| DAG check | NetworkX |
+| Fonts | Syne, IBM Plex Mono |
+
+---
+
+## Setup
+
+### Backend
+```bash
+cd backend
+pip install -r requirements.txt
+uvicorn main:app --reload --port 8000
+```
+
+### Frontend
 ```bash
 cd frontend
-npm ci
+npm install
 npm start
 ```
 
-Frontend will be available at `http://localhost:3000`.
+Open `http://localhost:3000`.
 
-## Validation commands
+---
 
-```bash
-cd frontend
-CI=true npm test -- --watch=false --passWithNoTests
-npm run build
-```
+## Tradeoffs & Future Improvements
 
-## API contract
-
-- **Endpoint**: `POST /pipelines/parse`
-- **Body**: JSON object with `nodes` and `edges` arrays.
-- **Response**:
-
-```json
-{
-  "num_nodes": 3,
-  "num_edges": 2,
-  "is_dag": true
-}
-```
+- **No persistence** — pipeline state lives in memory; adding `localStorage` or a DB would enable save/load
+- **No execution** — nodes are structural only; a runtime engine could evaluate the graph
+- **Node search** — the toolbar could filter by keyword as the node count grows
+- **Edge validation** — could warn when an input handle type (Text vs File) mismatches the connected output

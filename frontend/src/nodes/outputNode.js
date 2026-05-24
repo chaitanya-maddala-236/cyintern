@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { BaseNode } from './baseNode';
 import { useStore } from '../store';
+import { NodeField } from '../components/NodeField';
 
 export const OutputNode = ({ id, data }) => {
   const [currName, setCurrName] = useState(data?.outputName || id.replace('customOutput-', 'output_'));
@@ -35,10 +36,7 @@ export const OutputNode = ({ id, data }) => {
       color="#f59e0b"
       inputs={[{ id: 'value', label: 'value' }]}
     >
-      <div className="vs-field">
-        <label className="vs-label" htmlFor={`${id}-output-name`}>
-          Name
-        </label>
+      <NodeField id={`${id}-output-name`} label="Name">
         <input
           id={`${id}-output-name`}
           className="vs-input"
@@ -46,11 +44,8 @@ export const OutputNode = ({ id, data }) => {
           value={currName}
           onChange={handleNameChange}
         />
-      </div>
-      <div className="vs-field">
-        <label className="vs-label" htmlFor={`${id}-output-type`}>
-          Type
-        </label>
+      </NodeField>
+      <NodeField id={`${id}-output-type`} label="Type">
         <select
           id={`${id}-output-type`}
           className="vs-select"
@@ -60,7 +55,7 @@ export const OutputNode = ({ id, data }) => {
           <option value="Text">Text</option>
           <option value="Image">Image</option>
         </select>
-      </div>
+      </NodeField>
     </BaseNode>
   );
 };

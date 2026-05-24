@@ -54,6 +54,20 @@ export const SubmitButton = () => {
           role="dialog"
           aria-modal="true"
           aria-labelledby={error ? 'submission-error-title' : 'submission-result-title'}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') {
+              setResult(null);
+              setError('');
+            }
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setResult(null);
+              setError('');
+            }
+          }}
+          tabIndex={-1}
+          ref={(el) => el && el.focus()}
         >
           <div className="vs-alert">
             {error ? (

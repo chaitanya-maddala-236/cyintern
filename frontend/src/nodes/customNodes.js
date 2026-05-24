@@ -1,9 +1,12 @@
 import { useState } from 'react';
 import { BaseNode } from './baseNode';
+import { useStore } from '../store';
+import { NodeField } from '../components/NodeField';
 
 export const ApiNode = ({ id, data }) => {
   const [method, setMethod] = useState(data?.method || 'GET');
   const [url, setUrl] = useState(data?.url || '');
+  const updateNodeField = useStore((state) => state.updateNodeField);
 
   return (
     <BaseNode
@@ -17,41 +20,44 @@ export const ApiNode = ({ id, data }) => {
         { id: 'status', label: 'status' },
       ]}
     >
-      <div className="vs-field">
-        <label className="vs-label" htmlFor={`${id}-method`}>
-          Method
-        </label>
+      <NodeField id={`${id}-method`} label="Method">
         <select
           id={`${id}-method`}
           className="vs-select"
           value={method}
-          onChange={(e) => setMethod(e.target.value)}
+          onChange={(e) => {
+            const nextValue = e.target.value;
+            setMethod(nextValue);
+            updateNodeField(id, 'method', nextValue);
+          }}
         >
           <option value="GET">GET</option>
           <option value="POST">POST</option>
           <option value="PUT">PUT</option>
           <option value="DELETE">DELETE</option>
         </select>
-      </div>
-      <div className="vs-field">
-        <label className="vs-label" htmlFor={`${id}-url`}>
-          URL
-        </label>
+      </NodeField>
+      <NodeField id={`${id}-url`} label="URL">
         <input
           id={`${id}-url`}
           className="vs-input"
           type="text"
           value={url}
-          onChange={(e) => setUrl(e.target.value)}
+          onChange={(e) => {
+            const nextValue = e.target.value;
+            setUrl(nextValue);
+            updateNodeField(id, 'url', nextValue);
+          }}
           placeholder="https://api.example.com"
         />
-      </div>
+      </NodeField>
     </BaseNode>
   );
 };
 
 export const FilterNode = ({ id, data }) => {
   const [condition, setCondition] = useState(data?.condition || '');
+  const updateNodeField = useStore((state) => state.updateNodeField);
 
   return (
     <BaseNode
@@ -65,25 +71,27 @@ export const FilterNode = ({ id, data }) => {
         { id: 'false', label: 'false ✗' },
       ]}
     >
-      <div className="vs-field">
-        <label className="vs-label" htmlFor={`${id}-condition`}>
-          Condition
-        </label>
+      <NodeField id={`${id}-condition`} label="Condition">
         <input
           id={`${id}-condition`}
           className="vs-input"
           type="text"
           value={condition}
-          onChange={(e) => setCondition(e.target.value)}
+          onChange={(e) => {
+            const nextValue = e.target.value;
+            setCondition(nextValue);
+            updateNodeField(id, 'condition', nextValue);
+          }}
           placeholder="value > 10"
         />
-      </div>
+      </NodeField>
     </BaseNode>
   );
 };
 
 export const TransformNode = ({ id, data }) => {
   const [operation, setOperation] = useState(data?.operation || 'JSON→String');
+  const updateNodeField = useStore((state) => state.updateNodeField);
 
   return (
     <BaseNode
@@ -94,15 +102,16 @@ export const TransformNode = ({ id, data }) => {
       inputs={[{ id: 'input', label: 'input' }]}
       outputs={[{ id: 'output', label: 'output' }]}
     >
-      <div className="vs-field">
-        <label className="vs-label" htmlFor={`${id}-operation`}>
-          Operation
-        </label>
+      <NodeField id={`${id}-operation`} label="Operation">
         <select
           id={`${id}-operation`}
           className="vs-select"
           value={operation}
-          onChange={(e) => setOperation(e.target.value)}
+          onChange={(e) => {
+            const nextValue = e.target.value;
+            setOperation(nextValue);
+            updateNodeField(id, 'operation', nextValue);
+          }}
         >
           <option value="JSON→String">JSON→String</option>
           <option value="String→JSON">String→JSON</option>
@@ -110,35 +119,38 @@ export const TransformNode = ({ id, data }) => {
           <option value="Lowercase">Lowercase</option>
           <option value="Trim">Trim</option>
         </select>
-      </div>
+      </NodeField>
     </BaseNode>
   );
 };
 
 export const NoteNode = ({ id, data }) => {
   const [note, setNote] = useState(data?.note || '');
+  const updateNodeField = useStore((state) => state.updateNodeField);
 
   return (
     <BaseNode id={id} title="Note" icon="🗒️" color="#a3a3a3" minWidth={240}>
-      <div className="vs-field">
-        <label className="vs-label" htmlFor={`${id}-note`}>
-          Notes
-        </label>
+      <NodeField id={`${id}-note`} label="Notes">
         <textarea
           id={`${id}-note`}
-          className="vs-textarea"
+          className="vs-textarea vs-textarea--resizable"
           value={note}
-          onChange={(e) => setNote(e.target.value)}
+          onChange={(e) => {
+            const nextValue = e.target.value;
+            setNote(nextValue);
+            updateNodeField(id, 'note', nextValue);
+          }}
           rows={4}
           placeholder="Comments..."
         />
-      </div>
+      </NodeField>
     </BaseNode>
   );
 };
 
 export const MergeNode = ({ id, data }) => {
   const [separator, setSeparator] = useState(data?.separator || ',');
+  const updateNodeField = useStore((state) => state.updateNodeField);
 
   return (
     <BaseNode
@@ -153,18 +165,19 @@ export const MergeNode = ({ id, data }) => {
       ]}
       outputs={[{ id: 'merged', label: 'merged' }]}
     >
-      <div className="vs-field">
-        <label className="vs-label" htmlFor={`${id}-separator`}>
-          Separator
-        </label>
+      <NodeField id={`${id}-separator`} label="Separator">
         <input
           id={`${id}-separator`}
           className="vs-input"
           type="text"
           value={separator}
-          onChange={(e) => setSeparator(e.target.value)}
+          onChange={(e) => {
+            const nextValue = e.target.value;
+            setSeparator(nextValue);
+            updateNodeField(id, 'separator', nextValue);
+          }}
         />
-      </div>
+      </NodeField>
     </BaseNode>
   );
 };
