@@ -1,21 +1,24 @@
 import { useState } from 'react';
 import { useStore } from './store';
 
+const getParseUrl = () => {
+  const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000';
+  return `${apiBaseUrl.replace(/\/$/, '')}/pipelines/parse`;
+};
+
 export const SubmitButton = () => {
   const nodes = useStore((state) => state.nodes);
   const edges = useStore((state) => state.edges);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [result, setResult] = useState(null);
-  const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000';
-  const parseUrl = `${apiBaseUrl.replace(/\/$/, '')}/pipelines/parse`;
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
     setError('');
 
     try {
-      const response = await fetch(parseUrl, {
+      const response = await fetch(getParseUrl(), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
