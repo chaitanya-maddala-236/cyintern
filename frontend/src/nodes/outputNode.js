@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BaseNode } from './baseNode';
 import { useStore } from '../store';
 
@@ -6,6 +6,14 @@ export const OutputNode = ({ id, data }) => {
   const [currName, setCurrName] = useState(data?.outputName || id.replace('customOutput-', 'output_'));
   const [outputType, setOutputType] = useState(data?.outputType || 'Text');
   const updateNodeField = useStore((state) => state.updateNodeField);
+
+  useEffect(() => {
+    setCurrName(data?.outputName || id.replace('customOutput-', 'output_'));
+  }, [data?.outputName, id]);
+
+  useEffect(() => {
+    setOutputType(data?.outputType || 'Text');
+  }, [data?.outputType]);
 
   const handleNameChange = (e) => {
     const nextValue = e.target.value;

@@ -2,17 +2,20 @@ import { useState } from 'react';
 import { useStore } from './store';
 
 export const SubmitButton = () => {
-  const { nodes, edges } = useStore((state) => ({ nodes: state.nodes, edges: state.edges }));
+  const nodes = useStore((state) => state.nodes);
+  const edges = useStore((state) => state.edges);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [result, setResult] = useState(null);
+  const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000';
+  const parseUrl = `${apiBaseUrl.replace(/\/$/, '')}/pipelines/parse`;
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
     setError('');
 
     try {
-      const response = await fetch('http://localhost:8000/pipelines/parse', {
+      const response = await fetch(parseUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -43,16 +46,21 @@ export const SubmitButton = () => {
       </div>
 
       {(result || error) && (
-        <div className="vs-alert-overlay" role="dialog" aria-modal="true">
+        <div
+          className="vs-alert-overlay"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={error ? 'submission-error-title' : 'submission-result-title'}
+        >
           <div className="vs-alert">
             {error ? (
               <>
-                <h3>Submission failed</h3>
+                <h3 id="submission-error-title">Submission failed</h3>
                 <p>{error}</p>
               </>
             ) : (
               <>
-                <h3>Pipeline parse result</h3>
+                <h3 id="submission-result-title">Pipeline parse result</h3>
                 <div className="vs-alert-stats">
                   <div className="vs-stat">
                     <div className="vs-stat-value">{result?.num_nodes ?? 0}</div>

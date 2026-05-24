@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BaseNode } from './baseNode';
 import { useStore } from '../store';
 
@@ -6,6 +6,14 @@ export const InputNode = ({ id, data }) => {
   const [currName, setCurrName] = useState(data?.inputName || id.replace('customInput-', 'input_'));
   const [inputType, setInputType] = useState(data?.inputType || 'Text');
   const updateNodeField = useStore((state) => state.updateNodeField);
+
+  useEffect(() => {
+    setCurrName(data?.inputName || id.replace('customInput-', 'input_'));
+  }, [data?.inputName, id]);
+
+  useEffect(() => {
+    setInputType(data?.inputType || 'Text');
+  }, [data?.inputType]);
 
   const handleNameChange = (e) => {
     const nextValue = e.target.value;

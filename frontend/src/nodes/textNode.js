@@ -37,6 +37,10 @@ export const TextNode = ({ id, data }) => {
   };
 
   useEffect(() => {
+    setCurrText(data?.text || '{{input}}');
+  }, [data?.text]);
+
+  useEffect(() => {
     const element = textAreaRef.current;
     if (!element) {
       return;
