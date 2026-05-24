@@ -7,7 +7,15 @@ Drag nodes onto the canvas, wire them together, and submit to validate your pipe
 
 ## Demo
 
-Demo GIF coming soon.
+![Pipeline Builder Demo](./demo.gif)
+
+---
+
+## Screenshots
+
+| Canvas | Result Modal |
+|--------|-------------|
+| ![Canvas](./screenshots/canvas.png) | ![Modal](./screenshots/modal.png) |
 
 ---
 
@@ -36,7 +44,7 @@ frontend/src/
 │   └── customNodes.js    ← Api, Filter, Transform, Note, Merge
 ├── components/
 │   └── NodeField.js      ← shared field wrapper used by nodes
-├── store.js              ← Zustand: nodes, edges, updateNodeField
+├── store.js              ← Zustand: nodes, edges, nodeIDs, updateNodeField
 ├── ui.js                 ← ReactFlow canvas
 ├── toolbar.js            ← draggable node palette
 └── submit.js             ← POST to backend + result modal

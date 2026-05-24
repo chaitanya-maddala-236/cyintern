@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { BaseNode } from './baseNode';
 import { useStore } from '../store';
 import { NodeField } from '../components/NodeField';
@@ -7,15 +7,16 @@ export const ApiNode = ({ id, data }) => {
   const [method, setMethod] = useState(data?.method || 'GET');
   const [url, setUrl] = useState(data?.url || '');
   const updateNodeField = useStore((state) => state.updateNodeField);
+  const hasInitialised = useRef(false);
 
   useEffect(() => {
-    if (data?.method == null) {
+    if (!hasInitialised.current) {
+      hasInitialised.current = true;
       updateNodeField(id, 'method', method);
-    }
-    if (data?.url == null) {
       updateNodeField(id, 'url', url);
     }
-  }, [data?.method, data?.url, id, method, updateNodeField, url]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <BaseNode
@@ -67,12 +68,15 @@ export const ApiNode = ({ id, data }) => {
 export const FilterNode = ({ id, data }) => {
   const [condition, setCondition] = useState(data?.condition || '');
   const updateNodeField = useStore((state) => state.updateNodeField);
+  const hasInitialised = useRef(false);
 
   useEffect(() => {
-    if (data?.condition == null) {
+    if (!hasInitialised.current) {
+      hasInitialised.current = true;
       updateNodeField(id, 'condition', condition);
     }
-  }, [condition, data?.condition, id, updateNodeField]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <BaseNode
@@ -107,12 +111,15 @@ export const FilterNode = ({ id, data }) => {
 export const TransformNode = ({ id, data }) => {
   const [operation, setOperation] = useState(data?.operation || 'JSON→String');
   const updateNodeField = useStore((state) => state.updateNodeField);
+  const hasInitialised = useRef(false);
 
   useEffect(() => {
-    if (data?.operation == null) {
+    if (!hasInitialised.current) {
+      hasInitialised.current = true;
       updateNodeField(id, 'operation', operation);
     }
-  }, [data?.operation, id, operation, updateNodeField]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <BaseNode
@@ -148,12 +155,15 @@ export const TransformNode = ({ id, data }) => {
 export const NoteNode = ({ id, data }) => {
   const [note, setNote] = useState(data?.note || '');
   const updateNodeField = useStore((state) => state.updateNodeField);
+  const hasInitialised = useRef(false);
 
   useEffect(() => {
-    if (data?.note == null) {
+    if (!hasInitialised.current) {
+      hasInitialised.current = true;
       updateNodeField(id, 'note', note);
     }
-  }, [data?.note, id, note, updateNodeField]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <BaseNode id={id} title="Note" icon="🗒️" color="#a3a3a3" minWidth={240}>
@@ -178,12 +188,15 @@ export const NoteNode = ({ id, data }) => {
 export const MergeNode = ({ id, data }) => {
   const [separator, setSeparator] = useState(data?.separator || ',');
   const updateNodeField = useStore((state) => state.updateNodeField);
+  const hasInitialised = useRef(false);
 
   useEffect(() => {
-    if (data?.separator == null) {
+    if (!hasInitialised.current) {
+      hasInitialised.current = true;
       updateNodeField(id, 'separator', separator);
     }
-  }, [data?.separator, id, separator, updateNodeField]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <BaseNode

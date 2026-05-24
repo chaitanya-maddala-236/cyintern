@@ -14,8 +14,8 @@ export const LLMNode = ({ id }) => {
       outputs={[{ id: 'response', label: 'response' }]}
     >
       <div className="vs-field">
-        <span className="vs-label" style={{ fontSize: 11, textTransform: 'none' }}>
-          Add system + prompt inputs to generate a response.
+        <span className="vs-hint">
+          Connect a system prompt and user prompt to generate a response.
         </span>
       </div>
     </BaseNode>
