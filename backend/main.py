@@ -20,8 +20,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=cors_origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
 )
 
 
@@ -31,13 +31,18 @@ class PipelineParseRequest(BaseModel):
 
 
 def _is_dag(nodes: list[dict[str, Any]], edges: list[dict[str, Any]]) -> bool:
-    node_ids = {str(node["id"]) for node in nodes if node.get("id") is not None}
+    node_ids = {str(node["id"]) for node in nodes if "id" in node and node["id"] is not None}
     indegree: dict[str, int] = {node_id: 0 for node_id in node_ids}
     graph: dict[str, list[str]] = defaultdict(list)
 
     for edge in edges:
-        source = edge.get("source")
-        target = edge.get("target")
+        raw_source = edge.get("source")
+        raw_target = edge.get("target")
+        if raw_source is None or raw_target is None:
+            continue
+
+        source = str(raw_source)
+        target = str(raw_target)
 
         if source in node_ids and target in node_ids:
             graph[source].append(target)

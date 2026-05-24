@@ -11,16 +11,14 @@ export const TextNode = ({ id, data }) => {
   const variables = useMemo(() => {
     const foundVariables = [];
     const foundSet = new Set();
-    const regex = /\{\{\s*([a-zA-Z_$][\w$]*)\s*\}\}/g;
-    let match = regex.exec(currText);
+    const matches = currText.matchAll(/\{\{\s*([a-zA-Z_$][\w$]*)\s*\}\}/g);
 
-    while (match) {
+    for (const match of matches) {
       const variable = match[1];
       if (!foundSet.has(variable)) {
         foundSet.add(variable);
         foundVariables.push(variable);
       }
-      match = regex.exec(currText);
     }
 
     return foundVariables;
