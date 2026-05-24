@@ -1,35 +1,93 @@
-// textNode.js
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { BaseNode } from './baseNode';
+import { useStore } from '../store';
 
-import { useState } from 'react';
-import { Handle, Position } from 'reactflow';
+const VARIABLE_HANDLE_PATTERN = /\{\{\s*([a-zA-Z_$][\w$]*)\s*\}\}/g;
+const MIN_NODE_WIDTH = 220;
+const MAX_NODE_WIDTH = 560;
+const CHARACTER_WIDTH_ESTIMATE = 8;
+const WIDTH_PADDING = 64;
 
 export const TextNode = ({ id, data }) => {
   const [currText, setCurrText] = useState(data?.text || '{{input}}');
+  const [minWidth, setMinWidth] = useState(MIN_NODE_WIDTH);
+  const textAreaRef = useRef(null);
+  const updateNodeField = useStore((state) => state.updateNodeField);
+
+  const variables = useMemo(() => {
+    const foundVariables = [];
+    const foundSet = new Set();
+    const matches = currText.matchAll(VARIABLE_HANDLE_PATTERN);
+
+    for (const match of matches) {
+      const variable = match[1];
+      if (!foundSet.has(variable)) {
+        foundSet.add(variable);
+        foundVariables.push(variable);
+      }
+    }
+
+    return foundVariables;
+  }, [currText]);
 
   const handleTextChange = (e) => {
-    setCurrText(e.target.value);
+    const nextValue = e.target.value;
+    setCurrText(nextValue);
+    updateNodeField(id, 'text', nextValue);
   };
 
+  useEffect(() => {
+    setCurrText(data?.text || '{{input}}');
+  }, [data?.text]);
+
+  useEffect(() => {
+    const element = textAreaRef.current;
+    if (!element) {
+      return;
+    }
+
+    element.style.height = 'auto';
+    element.style.height = `${element.scrollHeight}px`;
+
+    const longestLineLength = currText
+      .split('\n')
+      .reduce((maxLength, line) => Math.max(maxLength, line.length), 0);
+    const dynamicWidth = Math.min(
+      MAX_NODE_WIDTH,
+      Math.max(MIN_NODE_WIDTH, longestLineLength * CHARACTER_WIDTH_ESTIMATE + WIDTH_PADDING),
+    );
+    setMinWidth(dynamicWidth);
+  }, [currText]);
+
+  const inputHandles = variables.map((variable) => ({
+    id: `var-${variable}`,
+    label: variable,
+  }));
+
   return (
-    <div style={{width: 200, height: 80, border: '1px solid black'}}>
-      <div>
-        <span>Text</span>
-      </div>
-      <div>
-        <label>
-          Text:
-          <input 
-            type="text" 
-            value={currText} 
-            onChange={handleTextChange} 
-          />
+    <BaseNode
+      id={id}
+      title="Text"
+      icon="📝"
+      color="#8b5cf6"
+      inputs={inputHandles}
+      outputs={[{ id: 'output', label: 'text' }]}
+      minWidth={minWidth}
+    >
+      <div className="vs-field">
+        <label className="vs-label" htmlFor={`${id}-text`}>
+          Text
         </label>
+        <textarea
+          ref={textAreaRef}
+          id={`${id}-text`}
+          className="vs-textarea"
+          value={currText}
+          onChange={handleTextChange}
+          rows={1}
+          style={{ resize: 'none', overflow: 'hidden' }}
+        />
       </div>
-      <Handle
-        type="source"
-        position={Position.Right}
-        id={`${id}-output`}
-      />
-    </div>
+    </BaseNode>
   );
-}
+};
