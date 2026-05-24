@@ -142,6 +142,10 @@ body,
 }
 
 .vs-textarea {
+  /* nodes control sizing behavior */
+}
+
+.vs-textarea--resizable {
   resize: vertical;
   min-height: 80px;
 }

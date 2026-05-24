@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { BaseNode } from './baseNode';
 import { useStore } from '../store';
+import { NodeField } from '../components/NodeField';
 
 const VARIABLE_HANDLE_PATTERN = /\{\{\s*([a-zA-Z_$][\w$]*)\s*\}\}/g;
 const MIN_NODE_WIDTH = 220;
@@ -37,8 +38,10 @@ export const TextNode = ({ id, data }) => {
   };
 
   useEffect(() => {
-    setCurrText(data?.text || '{{input}}');
-  }, [data?.text]);
+    if (data?.text == null) {
+      updateNodeField(id, 'text', currText);
+    }
+  }, [currText, data?.text, id, updateNodeField]);
 
   useEffect(() => {
     const element = textAreaRef.current;
@@ -74,10 +77,7 @@ export const TextNode = ({ id, data }) => {
       outputs={[{ id: 'output', label: 'text' }]}
       minWidth={minWidth}
     >
-      <div className="vs-field">
-        <label className="vs-label" htmlFor={`${id}-text`}>
-          Text
-        </label>
+      <NodeField id={`${id}-text`} label="Text">
         <textarea
           ref={textAreaRef}
           id={`${id}-text`}
@@ -87,7 +87,7 @@ export const TextNode = ({ id, data }) => {
           rows={1}
           style={{ resize: 'none', overflow: 'hidden' }}
         />
-      </div>
+      </NodeField>
     </BaseNode>
   );
 };

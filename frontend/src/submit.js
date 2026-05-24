@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useStore } from './store';
 
 const getParseUrl = () => {
@@ -12,6 +12,13 @@ export const SubmitButton = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [result, setResult] = useState(null);
+  const overlayRef = useRef(null);
+
+  useEffect(() => {
+    if (result || error) {
+      overlayRef.current?.focus();
+    }
+  }, [error, result]);
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
@@ -54,6 +61,20 @@ export const SubmitButton = () => {
           role="dialog"
           aria-modal="true"
           aria-labelledby={error ? 'submission-error-title' : 'submission-result-title'}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') {
+              setResult(null);
+              setError('');
+            }
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setResult(null);
+              setError('');
+            }
+          }}
+          tabIndex={-1}
+          ref={overlayRef}
         >
           <div className="vs-alert">
             {error ? (

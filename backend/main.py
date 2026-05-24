@@ -1,9 +1,9 @@
-from collections import defaultdict, deque
 import os
 from typing import Any
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import networkx as nx
 from pydantic import BaseModel, Field
 
 app = FastAPI()
@@ -32,9 +32,15 @@ class PipelineParseRequest(BaseModel):
 
 
 def _is_dag(nodes: list[dict[str, Any]], edges: list[dict[str, Any]]) -> bool:
-    node_ids = {str(node["id"]) for node in nodes if "id" in node and node["id"] is not None}
-    indegree: dict[str, int] = {node_id: 0 for node_id in node_ids}
-    graph: dict[str, list[str]] = defaultdict(list)
+    graph = nx.DiGraph()
+    node_ids = set()
+
+    for node in nodes:
+        node_id = node.get("id")
+        if node_id is not None:
+            normalized_node_id = str(node_id)
+            node_ids.add(normalized_node_id)
+            graph.add_node(normalized_node_id)
 
     for edge in edges:
         raw_source = edge.get("source")
@@ -44,23 +50,11 @@ def _is_dag(nodes: list[dict[str, Any]], edges: list[dict[str, Any]]) -> bool:
 
         source = str(raw_source)
         target = str(raw_target)
+        if source not in node_ids or target not in node_ids:
+            continue
+        graph.add_edge(source, target)
 
-        if source in node_ids and target in node_ids:
-            graph[source].append(target)
-            indegree[target] += 1
-
-    queue = deque(node_id for node_id, degree in indegree.items() if degree == 0)
-    visited = 0
-
-    while queue:
-        current = queue.popleft()
-        visited += 1
-        for neighbor in graph[current]:
-            indegree[neighbor] -= 1
-            if indegree[neighbor] == 0:
-                queue.append(neighbor)
-
-    return visited == len(node_ids)
+    return nx.is_directed_acyclic_graph(graph)
 
 
 @app.get('/')

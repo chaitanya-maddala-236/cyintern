@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { BaseNode } from './baseNode';
 import { useStore } from '../store';
+import { NodeField } from '../components/NodeField';
 
 export const InputNode = ({ id, data }) => {
   const [currName, setCurrName] = useState(data?.inputName || id.replace('customInput-', 'input_'));
@@ -35,10 +36,7 @@ export const InputNode = ({ id, data }) => {
       color="#10b981"
       outputs={[{ id: 'value', label: 'value' }]}
     >
-      <div className="vs-field">
-        <label className="vs-label" htmlFor={`${id}-input-name`}>
-          Name
-        </label>
+      <NodeField id={`${id}-input-name`} label="Name">
         <input
           id={`${id}-input-name`}
           className="vs-input"
@@ -46,11 +44,8 @@ export const InputNode = ({ id, data }) => {
           value={currName}
           onChange={handleNameChange}
         />
-      </div>
-      <div className="vs-field">
-        <label className="vs-label" htmlFor={`${id}-input-type`}>
-          Type
-        </label>
+      </NodeField>
+      <NodeField id={`${id}-input-type`} label="Type">
         <select
           id={`${id}-input-type`}
           className="vs-select"
@@ -60,7 +55,7 @@ export const InputNode = ({ id, data }) => {
           <option value="Text">Text</option>
           <option value="File">File</option>
         </select>
-      </div>
+      </NodeField>
     </BaseNode>
   );
 };
