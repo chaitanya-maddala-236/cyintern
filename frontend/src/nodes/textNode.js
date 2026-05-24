@@ -2,16 +2,22 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { BaseNode } from './baseNode';
 import { useStore } from '../store';
 
+const VARIABLE_HANDLE_PATTERN = /\{\{\s*([a-zA-Z_$][\w$]*)\s*\}\}/g;
+const MIN_NODE_WIDTH = 220;
+const MAX_NODE_WIDTH = 560;
+const CHARACTER_WIDTH_ESTIMATE = 8;
+const WIDTH_PADDING = 64;
+
 export const TextNode = ({ id, data }) => {
   const [currText, setCurrText] = useState(data?.text || '{{input}}');
-  const [minWidth, setMinWidth] = useState(220);
+  const [minWidth, setMinWidth] = useState(MIN_NODE_WIDTH);
   const textAreaRef = useRef(null);
   const updateNodeField = useStore((state) => state.updateNodeField);
 
   const variables = useMemo(() => {
     const foundVariables = [];
     const foundSet = new Set();
-    const matches = currText.matchAll(/\{\{\s*([a-zA-Z_$][\w$]*)\s*\}\}/g);
+    const matches = currText.matchAll(VARIABLE_HANDLE_PATTERN);
 
     for (const match of matches) {
       const variable = match[1];
@@ -42,7 +48,10 @@ export const TextNode = ({ id, data }) => {
     const longestLineLength = currText
       .split('\n')
       .reduce((maxLength, line) => Math.max(maxLength, line.length), 0);
-    const dynamicWidth = Math.min(560, Math.max(220, longestLineLength * 8 + 64));
+    const dynamicWidth = Math.min(
+      MAX_NODE_WIDTH,
+      Math.max(MIN_NODE_WIDTH, longestLineLength * CHARACTER_WIDTH_ESTIMATE + WIDTH_PADDING),
+    );
     setMinWidth(dynamicWidth);
   }, [currText]);
 
