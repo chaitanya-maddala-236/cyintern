@@ -33,11 +33,14 @@ class PipelineParseRequest(BaseModel):
 
 def _is_dag(nodes: list[dict[str, Any]], edges: list[dict[str, Any]]) -> bool:
     graph = nx.DiGraph()
+    node_ids = set()
 
     for node in nodes:
         node_id = node.get("id")
         if node_id is not None:
-            graph.add_node(str(node_id))
+            normalized_node_id = str(node_id)
+            node_ids.add(normalized_node_id)
+            graph.add_node(normalized_node_id)
 
     for edge in edges:
         raw_source = edge.get("source")
@@ -47,6 +50,8 @@ def _is_dag(nodes: list[dict[str, Any]], edges: list[dict[str, Any]]) -> bool:
 
         source = str(raw_source)
         target = str(raw_target)
+        if source not in node_ids or target not in node_ids:
+            continue
         graph.add_edge(source, target)
 
     return nx.is_directed_acyclic_graph(graph)

@@ -7,8 +7,7 @@ Drag nodes onto the canvas, wire them together, and submit to validate your pipe
 
 ## Demo
 
-<!-- Add a GIF here: record with ScreenToGif, Loom, or macOS QuickTime + ezgif -->
-![demo](./demo.gif)
+Demo GIF coming soon.
 
 ---
 

@@ -6,10 +6,16 @@ export const DraggableNode = ({ type, label }) => {
     event.dataTransfer.effectAllowed = 'move';
   };
 
+  const resetCursor = (event) => {
+    event.currentTarget.style.cursor = '';
+  };
+
   return (
     <div
       className="draggable-node"
       onDragStart={(event) => onDragStart(event, type)}
+      onDragEnd={resetCursor}
+      onDragLeave={resetCursor}
       draggable
     >
       <span>{label}</span>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BaseNode } from './baseNode';
 import { useStore } from '../store';
 import { NodeField } from '../components/NodeField';
@@ -7,6 +7,15 @@ export const ApiNode = ({ id, data }) => {
   const [method, setMethod] = useState(data?.method || 'GET');
   const [url, setUrl] = useState(data?.url || '');
   const updateNodeField = useStore((state) => state.updateNodeField);
+
+  useEffect(() => {
+    if (data?.method == null) {
+      updateNodeField(id, 'method', method);
+    }
+    if (data?.url == null) {
+      updateNodeField(id, 'url', url);
+    }
+  }, [data?.method, data?.url, id, method, updateNodeField, url]);
 
   return (
     <BaseNode
@@ -59,6 +68,12 @@ export const FilterNode = ({ id, data }) => {
   const [condition, setCondition] = useState(data?.condition || '');
   const updateNodeField = useStore((state) => state.updateNodeField);
 
+  useEffect(() => {
+    if (data?.condition == null) {
+      updateNodeField(id, 'condition', condition);
+    }
+  }, [condition, data?.condition, id, updateNodeField]);
+
   return (
     <BaseNode
       id={id}
@@ -92,6 +107,12 @@ export const FilterNode = ({ id, data }) => {
 export const TransformNode = ({ id, data }) => {
   const [operation, setOperation] = useState(data?.operation || 'JSON→String');
   const updateNodeField = useStore((state) => state.updateNodeField);
+
+  useEffect(() => {
+    if (data?.operation == null) {
+      updateNodeField(id, 'operation', operation);
+    }
+  }, [data?.operation, id, operation, updateNodeField]);
 
   return (
     <BaseNode
@@ -128,6 +149,12 @@ export const NoteNode = ({ id, data }) => {
   const [note, setNote] = useState(data?.note || '');
   const updateNodeField = useStore((state) => state.updateNodeField);
 
+  useEffect(() => {
+    if (data?.note == null) {
+      updateNodeField(id, 'note', note);
+    }
+  }, [data?.note, id, note, updateNodeField]);
+
   return (
     <BaseNode id={id} title="Note" icon="🗒️" color="#a3a3a3" minWidth={240}>
       <NodeField id={`${id}-note`} label="Notes">
@@ -151,6 +178,12 @@ export const NoteNode = ({ id, data }) => {
 export const MergeNode = ({ id, data }) => {
   const [separator, setSeparator] = useState(data?.separator || ',');
   const updateNodeField = useStore((state) => state.updateNodeField);
+
+  useEffect(() => {
+    if (data?.separator == null) {
+      updateNodeField(id, 'separator', separator);
+    }
+  }, [data?.separator, id, separator, updateNodeField]);
 
   return (
     <BaseNode

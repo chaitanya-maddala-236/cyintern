@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useStore } from './store';
 
 const getParseUrl = () => {
@@ -12,6 +12,13 @@ export const SubmitButton = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [result, setResult] = useState(null);
+  const overlayRef = useRef(null);
+
+  useEffect(() => {
+    if (result || error) {
+      overlayRef.current?.focus();
+    }
+  }, [error, result]);
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
@@ -67,7 +74,7 @@ export const SubmitButton = () => {
             }
           }}
           tabIndex={-1}
-          ref={(el) => el && el.focus()}
+          ref={overlayRef}
         >
           <div className="vs-alert">
             {error ? (

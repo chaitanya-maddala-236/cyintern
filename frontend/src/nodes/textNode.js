@@ -38,6 +38,12 @@ export const TextNode = ({ id, data }) => {
   };
 
   useEffect(() => {
+    if (data?.text == null) {
+      updateNodeField(id, 'text', currText);
+    }
+  }, [currText, data?.text, id, updateNodeField]);
+
+  useEffect(() => {
     const element = textAreaRef.current;
     if (!element) {
       return;
