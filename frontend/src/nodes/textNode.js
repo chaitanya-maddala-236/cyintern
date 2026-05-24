@@ -13,6 +13,7 @@ export const TextNode = ({ id, data }) => {
   const [currText, setCurrText] = useState(data?.text || '{{input}}');
   const [minWidth, setMinWidth] = useState(MIN_NODE_WIDTH);
   const textAreaRef = useRef(null);
+  const hasInitialised = useRef(false);
   const updateNodeField = useStore((state) => state.updateNodeField);
 
   const variables = useMemo(() => {
@@ -38,10 +39,12 @@ export const TextNode = ({ id, data }) => {
   };
 
   useEffect(() => {
-    if (data?.text == null) {
+    if (!hasInitialised.current) {
+      hasInitialised.current = true;
       updateNodeField(id, 'text', currText);
     }
-  }, [currText, data?.text, id, updateNodeField]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const element = textAreaRef.current;
