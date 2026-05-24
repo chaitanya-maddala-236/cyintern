@@ -17,7 +17,7 @@ This repository contains:
 ## Run the backend
 
 ```bash
-cd /home/runner/work/cyintern/cyintern/backend
+cd backend
 python -m pip install fastapi uvicorn
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
@@ -27,7 +27,7 @@ Backend will be available at `http://localhost:8000`.
 ## Run the frontend
 
 ```bash
-cd /home/runner/work/cyintern/cyintern/frontend
+cd frontend
 npm ci
 npm start
 ```
@@ -37,7 +37,7 @@ Frontend will be available at `http://localhost:3000`.
 ## Validation commands
 
 ```bash
-cd /home/runner/work/cyintern/cyintern/frontend
+cd frontend
 CI=true npm test -- --watch=false --passWithNoTests
 npm run build
 ```
